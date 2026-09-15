@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#eb0a1e">
+    <meta name="description" content="Toyota Uganda - Invest in premium vehicles and earn daily returns.">
+    <title>Toyota Uganda — Invest & Earn Daily</title>
+
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- ===================== AUTH SCREEN ===================== -->
+    <div id="authScreen" class="auth-screen">
+        <div class="auth-card">
+            <h2>🚗 TOYOTA UGANDA</h2>
+            <div class="auth-tabs">
+                <button id="regTab" class="btn btn-primary btn-sm auth-tab" onclick="switchAuth('register')">REGISTER</button>
+                <button id="loginTab" class="btn btn-outline btn-sm auth-tab" onclick="switchAuth('login')">LOGIN</button>
+            </div>
+
+            <!-- Register Form -->
+            <div id="registerForm">
+                <div class="form-group">
+                    <label>Full Name (as on ID)</label>
+                    <input type="text" id="regName" placeholder="Enter full name" autocomplete="name">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <div class="phone-input">
+                        <select id="regCountry">
+                            <option value="+256">+256</option>
+                            <option value="+254">+254</option>
+                        </select>
+                        <input type="tel" id="regPhone" placeholder="7XXXXXXXX" autocomplete="tel">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="regPassword" placeholder="Create password" autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="regConfirm" placeholder="Confirm password" autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label>Referral Code (Optional)</label>
+                    <input type="text" id="regReferral" placeholder="Auto-filled from link">
+                </div>
+                <button class="btn btn-primary btn-block" onclick="register()">SIGN UP — Get 3,000 UGX Bonus</button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginForm" class="hidden">
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <div class="phone-input">
+                        <select id="loginCountry">
+                            <option value="+256">+256</option>
+                            <option value="+254">+254</option>
+                        </select>
+                        <input type="tel" id="loginPhone" placeholder="7XXXXXXXX" autocomplete="tel">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password">
+                </div>
+                <button class="btn btn-primary btn-block" onclick="login()">LOGIN</button>
+            </div>
+
+            <p class="auth-footer">
+                WhatsApp:
+                <a href="https://chat.whatsapp.com/EoaIhrkXUkCHh4BYbXWc8y?s=cl&p=a&mlu=4&ilr=4"
+                   target="_blank" rel="noopener">Join Group</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- ===================== USER DASHBOARD ===================== -->
+    <div id="userDashboard" class="dashboard">
+        <div class="dash-header">
+            <h3>🚗 TOYOTA UGANDA</h3>
+            <button class="btn btn-outline btn-sm" onclick="logout()">Logout</button>
+        </div>
+        <div class="dash-balance">
+            <div class="balance-card">
+                <h4>Balance</h4>
+                <div class="amount" id="userBalance">0</div>
+            </div>
+            <div class="balance-card">
+                <h4>Invested</h4>
+                <div class="amount" id="userInvested">0</div>
+            </div>
+            <div class="balance-card">
+                <h4>Earned</h4>
+                <div class="amount" id="userEarned">0</div>
+            </div>
+            <div class="balance-card">
+                <h4>Referral</h4>
+                <div class="amount" id="userRefEarn">0</div>
+            </div>
+        </div>
+        <div id="userContent"></div>
+    </div>
+
+    <!-- ===================== BOTTOM NAV ===================== -->
+    <div class="bottom-nav" id="bottomNav">
+        <div class="bottom-nav-inner">
+            <div class="bottom-nav-item active" data-tab="home" onclick="showHome()">
+                <span>🏠</span><small>Home</small>
+            </div>
+            <div class="bottom-nav-item" data-tab="orders" onclick="showOrders()">
+                <span>📦</span><small>My Order</small>
+            </div>
+            <div class="bottom-nav-item" data-tab="team" onclick="showTeam()">
+                <span>👥</span><small>Team</small>
+            </div>
+            <div class="bottom-nav-item" data-tab="profile" onclick="showProfile()">
+                <span>👤</span><small>Profile</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== ADMIN CONSOLE ===================== -->
+    <div id="adminConsole" class="admin-console">
+        <div class="dash-header admin-header">
+            <h3>🔐 TOYOTA UGANDA ADMIN</h3>
+            <button class="btn btn-outline btn-sm" onclick="adminLogout()">Logout</button>
+        </div>
+        <div class="admin-metrics">
+            <div class="metric-card">
+                <h4>Total Users</h4>
+                <div class="value" id="adminUsers">0</div>
+            </div>
+            <div class="metric-card">
+                <h4>Total Deposited</h4>
+                <div class="value" id="adminDeposits">0</div>
+            </div>
+            <div class="metric-card">
+                <h4>Total Invested</h4>
+                <div class="value" id="adminInvested">0</div>
+            </div>
+            <div class="metric-card">
+                <h4>Total Paid Out</h4>
+                <div class="value" id="adminPaidOut">0</div>
+            </div>
+        </div>
+        <div class="admin-tabs">
+            <button class="admin-tab active" onclick="adminTab('deposits', event)">Pending Deposits</button>
+            <button class="admin-tab" onclick="adminTab('withdrawals', event)">Pending Withdrawals</button>
+            <button class="admin-tab" onclick="adminTab('users', event)">All Users</button>
+        </div>
+        <div id="adminContent" class="admin-content"></div>
+    </div>
+
+    <!-- ===================== DEPOSIT MODAL ===================== -->
+    <div class="modal-overlay" id="rechargeModal">
+        <div class="modal">
+            <h3 class="modal-title">💰 Deposit</h3>
+            <div class="form-group">
+                <label>Amount (UGX)</label>
+                <input type="number" id="rechargeAmount" min="10000" placeholder="Min 10,000">
+            </div>
+            <div class="form-group">
+                <label>Phone Number (to pay with)</label>
+                <input type="tel" id="rechargePhone" placeholder="7XXXXXXXX">
+            </div>
+            <button class="btn btn-primary btn-block" style="margin-bottom:8px;" onclick="selectBank('A')">Bank A</button>
+            <button class="btn btn-warning btn-block" style="margin-bottom:8px;" onclick="selectBank('B')">Bank B</button>
+            <div id="bankInstructions" class="bank-instructions"></div>
+            <div class="form-group">
+                <label>Transaction ID</label>
+                <input type="text" id="txId" placeholder="Enter transaction ID">
+            </div>
+            <div class="form-group">
+                <label>Phone Number Used</label>
+                <input type="tel" id="txPhone" placeholder="7XXXXXXXX">
+            </div>
+            <button class="btn btn-success btn-block" onclick="submitDeposit()">Submit Deposit</button>
+            <p class="modal-note">⏱️ Approval takes 3-10 minutes.</p>
+            <button class="btn btn-outline btn-sm btn-block" style="margin-top:12px;" onclick="closeRecharge()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- ===================== WITHDRAW MODAL ===================== -->
+    <div class="modal-overlay" id="withdrawModal">
+        <div class="modal">
+            <h3 class="modal-title">🏧 Withdraw</h3>
+            <div class="form-group">
+                <label>Amount (UGX)</label>
+                <input type="number" id="withdrawAmount" min="4000" oninput="updateFee()">
+            </div>
+            <div class="form-group">
+                <label>Receiver Number</label>
+                <input type="tel" id="withdrawPhone" placeholder="7XXXXXXXX">
+            </div>
+            <div class="form-group">
+                <label>Name as on ID</label>
+                <input type="text" id="withdrawName" placeholder="Enter full name">
+            </div>
+            <div class="fee-summary">
+                <div>Fee (12%): <span id="withdrawFee">0</span> UGX</div>
+                <div>You receive: <span id="withdrawNet">0</span> UGX</div>
+            </div>
+            <button class="btn btn-primary btn-block" onclick="submitWithdraw()">Confirm Withdrawal</button>
+            <button class="btn btn-outline btn-sm btn-block" style="margin-top:8px;" onclick="document.getElementById('withdrawModal').classList.remove('active')">Cancel</button>
+        </div>
+    </div>
+
+    <!-- ===================== TOAST CONTAINER ===================== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ===================== SCRIPT ===================== -->
+    <script src="script.js"></script>
+</body>
+              </html>
