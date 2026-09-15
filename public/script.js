@@ -3,10 +3,8 @@
    ============================================================ */
 
 // ======================= SUPABASE CONFIGURATION =======================
-// ⚠️ IMPORTANT: Replace these with your Supabase project credentials
-// Get them from: https://app.supabase.com → Your Project → Settings → API
-const SUPABASE_URL = 'https://YOUR-PROJECT-ID.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR-ANON-PUBLIC-KEY';
+const SUPABASE_URL = 'https://uiidsthzvnxvouxjpsfd.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpaWRzdGh6dm54dm91eGpwc2ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNjgwNjEsImV4cCI6MjEwNDk0NDA2MX0.hXbFdoKo78LnBKv5OqNunO1tOmnMBvC7khh0tzZAVc4';
 
 // Initialize Supabase client
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -39,7 +37,6 @@ const REFERRAL_STORAGE_KEY = 'toyota_ref';
 const USER_SESSION_KEY = 'toyota_user';
 const ADMIN_SESSION_KEY = 'toyota_admin';
 
-// ======================= CURRENT USER CACHE =======================
 let currentUser = null;
 
 // ======================= TOAST =======================
@@ -92,7 +89,7 @@ function switchAuth(tab) {
     }
 }
 
-// ======================= REGISTER (Supabase) =======================
+// ======================= REGISTER =======================
 async function register() {
     const name = document.getElementById('regName').value.trim();
     const country = document.getElementById('regCountry').value;
@@ -106,7 +103,8 @@ async function register() {
     if (!password || password.length < 6) { showToast('Password too short', 'error'); return; }
     if (password !== confirm) { showToast('Passwords do not match', 'error'); return; }
 
-    const fullPhone = country + phone;
+    const cleanPhone = phone.replace(/^\+/, '').replace(/^256/, '').replace(/^254/, '').replace(/^0/, '');
+    const fullPhone = country + cleanPhone;
 
     try {
         const { data: existing } = await supabase
@@ -153,7 +151,7 @@ async function register() {
     }
 }
 
-// ======================= LOGIN (Supabase) =======================
+// ======================= LOGIN =======================
 async function login() {
     const country = document.getElementById('loginCountry').value;
     const phone = document.getElementById('loginPhone').value.trim();
@@ -166,7 +164,8 @@ async function login() {
         return;
     }
 
-    const fullPhone = country + phone;
+    const cleanPhone = phone.replace(/^\+/, '').replace(/^256/, '').replace(/^254/, '').replace(/^0/, '');
+    const fullPhone = country + cleanPhone;
 
     try {
         const { data: user, error } = await supabase
@@ -653,7 +652,6 @@ async function submitWithdraw() {
     const net = amt - fee;
 
     try {
-        // Deduct balance immediately
         const { error: balanceError } = await supabase
             .from('users')
             .update({ balance: currentUser.balance - amt })
@@ -661,7 +659,6 @@ async function submitWithdraw() {
 
         if (balanceError) throw balanceError;
 
-        // Create withdrawal record
         const { error: withdrawError } = await supabase
             .from('withdrawals')
             .insert([{
@@ -695,7 +692,6 @@ async function purchase(planId) {
     const plan = PLANS.find(p => p.id === planId);
     if (!plan) return;
 
-    // Check if already purchased this plan
     const { data: existing } = await supabase
         .from('investments')
         .select('id')
@@ -710,7 +706,6 @@ async function purchase(planId) {
         const newBalance = currentUser.balance - plan.amount;
         const newInvested = (currentUser.total_invested || 0) + plan.amount;
 
-        // 1. Deduct balance and update total invested
         const { error: userError } = await supabase
             .from('users')
             .update({ balance: newBalance, total_invested: newInvested })
@@ -718,7 +713,6 @@ async function purchase(planId) {
 
         if (userError) throw userError;
 
-        // 2. Create the investment record
         const { error: invError } = await supabase
             .from('investments')
             .insert([{
@@ -733,7 +727,6 @@ async function purchase(planId) {
 
         if (invError) throw invError;
 
-        // 3. Trigger multi-level referral commission via SQL function
         const { error: rpcError } = await supabase.rpc('process_referral_commission', {
             p_user_id: currentUser.id,
             p_amount: plan.amount
@@ -741,7 +734,6 @@ async function purchase(planId) {
 
         if (rpcError) {
             console.error('Referral commission error:', rpcError);
-            // Non-fatal: purchase still succeeds even if commission fails
         }
 
         await refreshUser();
@@ -977,7 +969,6 @@ async function rejectWithdraw(id) {
             .update({ status: 'rejected' })
             .eq('id', id);
 
-        // Refund user
         const { data: user } = await supabase
             .from('users')
             .select('balance')
@@ -1024,7 +1015,6 @@ async function toggleBlock(userId) {
 }
 
 // ======================= DAILY EARNINGS AUTO-CREDIT =======================
-// Client-side trigger at 00:00. In production, use a Supabase Edge Function + pg_cron.
 setInterval(() => {
     const now = new Date();
     if (now.getHours() === 0 && now.getMinutes() === 0) {
@@ -1069,20 +1059,17 @@ async function creditDailyEarnings() {
 document.addEventListener('DOMContentLoaded', async () => {
     captureReferral();
 
-    // Close modals on overlay click
     document.querySelectorAll('.modal-overlay').forEach(o => {
         o.addEventListener('click', function (e) {
             if (e.target === this) this.classList.remove('active');
         });
     });
 
-    // Check admin session
     if (sessionStorage.getItem(ADMIN_SESSION_KEY) === 'true') {
         showAdminConsole();
         return;
     }
 
-    // Check user session
     const cached = localStorage.getItem(USER_SESSION_KEY);
     if (cached) {
         try {
