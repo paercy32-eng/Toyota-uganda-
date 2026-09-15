@@ -1,0 +1,748 @@
+/* ============================================================
+   TOYOTA UGANDA — Global Stylesheet
+   ============================================================ */
+
+/* ---------- CSS VARIABLES ---------- */
+:root {
+    --primary: #eb0a1e;
+    --primary-dark: #b80818;
+    --primary-light: #ff2e42;
+    --bg: #0a0a0f;
+    --bg2: #12121a;
+    --card: #1a1a2e;
+    --text: #ffffff;
+    --text2: #b0b0b0;
+    --text3: #707070;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --border: #2a2a3e;
+    --shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --transition: 0.3s;
+    --font: -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    --bottom-nav-height: 72px;
+}
+
+/* ---------- RESET ---------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.6;
+    padding-bottom: var(--bottom-nav-height);
+}
+
+/* ---------- SCROLLBAR ---------- */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 3px;
+}
+
+/* ---------- UTILITIES ---------- */
+.hidden {
+    display: none !important;
+}
+
+/* ---------- BUTTONS ---------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: 50px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: var(--font);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #fff;
+}
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--primary-light);
+    border: 2px solid var(--primary);
+}
+
+.btn-success {
+    background: var(--success);
+    color: #fff;
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: #fff;
+}
+
+.btn-warning {
+    background: var(--warning);
+    color: #fff;
+}
+
+.btn-sm {
+    padding: 10px 18px;
+    font-size: 13px;
+}
+
+.btn-block {
+    width: 100%;
+}
+
+/* ---------- NAVBAR ---------- */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: rgba(10, 10, 15, 0.95);
+    border-bottom: 2px solid var(--primary);
+    padding: 0 20px;
+}
+
+.navbar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+}
+
+.nav-logo {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--primary);
+}
+
+/* ---------- AUTH SCREEN ---------- */
+.auth-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px 40px;
+    background: linear-gradient(135deg, rgba(235, 10, 30, 0.1) 0%, transparent 60%);
+}
+
+.auth-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 32px;
+    width: 100%;
+    max-width: 420px;
+    border: 2px solid var(--primary);
+}
+
+.auth-card h2 {
+    text-align: center;
+    margin-bottom: 24px;
+    color: var(--primary);
+    font-size: 28px;
+}
+
+.auth-tabs {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.auth-tab {
+    flex: 1;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--text3);
+}
+
+.auth-footer a {
+    color: var(--primary);
+}
+
+/* ---------- FORM ---------- */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--primary);
+}
+
+.phone-input {
+    display: flex;
+    gap: 8px;
+}
+
+.phone-input select {
+    width: 100px;
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+}
+
+.phone-input input {
+    flex: 1;
+}
+
+/* ---------- DASHBOARD ---------- */
+.dashboard {
+    display: none;
+    min-height: 100vh;
+    background: var(--bg);
+    padding-top: 64px;
+}
+
+.dashboard.active {
+    display: block;
+}
+
+.dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.dash-balance {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    padding: 16px 20px;
+}
+
+.balance-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+    border: 1px solid var(--border);
+}
+
+.balance-card h4 {
+    font-size: 12px;
+    color: var(--text2);
+    margin-bottom: 6px;
+}
+
+.balance-card .amount {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--primary);
+}
+
+.dash-section {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin: 12px 20px;
+    border: 1px solid var(--border);
+}
+
+/* ---------- PLANS / PRODUCTS ---------- */
+.plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.plan-card {
+    background: var(--bg2);
+    border-radius: var(--radius);
+    padding: 20px;
+    border: 1px solid var(--border);
+    text-align: center;
+    transition: var(--transition);
+}
+
+.plan-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-3px);
+}
+
+.plan-card .vip-badge {
+    display: inline-block;
+    background: var(--primary);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.plan-card .car-icon {
+    font-size: 60px;
+    margin-bottom: 8px;
+}
+
+.plan-card h3 {
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.plan-card .amount {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+.plan-card .daily {
+    font-size: 13px;
+    color: var(--success);
+    margin: 6px 0;
+}
+
+.plan-card .duration {
+    font-size: 12px;
+    color: var(--text3);
+    margin-bottom: 8px;
+}
+
+/* ---------- BOTTOM NAVIGATION ---------- */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--bottom-nav-height);
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    display: none;
+    z-index: 1500;
+}
+
+.bottom-nav.active {
+    display: flex;
+}
+
+.bottom-nav-inner {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    padding: 8px;
+    transition: var(--transition);
+}
+
+.bottom-nav-item span {
+    font-size: 22px;
+}
+
+.bottom-nav-item small {
+    font-size: 10px;
+    color: var(--text3);
+}
+
+.bottom-nav-item.active small {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+/* ---------- MODALS ---------- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal {
+    background: var(--bg2);
+    border-radius: var(--radius);
+    padding: 24px;
+    width: 100%;
+    max-width: 450px;
+    border: 2px solid var(--primary);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-title {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.modal-note {
+    text-align: center;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--warning);
+}
+
+.fee-summary {
+    background: var(--bg);
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.bank-instructions {
+    margin: 12px 0;
+}
+
+/* ---------- TOASTS ---------- */
+.toast-container {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 3000;
+}
+
+.toast {
+    background: var(--bg2);
+    padding: 14px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--primary);
+    margin-bottom: 8px;
+    font-size: 14px;
+    animation: slideIn 0.3s;
+    max-width: 320px;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ---------- ADMIN CONSOLE ---------- */
+.admin-console {
+    display: none;
+    min-height: 100vh;
+    background: var(--bg);
+    padding-top: 64px;
+}
+
+.admin-console.active {
+    display: block;
+}
+
+.admin-header {
+    border-bottom: 2px solid var(--primary);
+}
+
+.admin-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    padding: 16px 20px;
+}
+
+.metric-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+    border: 2px solid var(--primary);
+}
+
+.metric-card h4 {
+    font-size: 12px;
+    color: var(--text2);
+}
+
+.metric-card .value {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--primary);
+}
+
+.admin-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 0 20px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.admin-tab {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 2px solid var(--primary);
+    background: transparent;
+    color: var(--primary);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.admin-tab.active {
+    background: var(--primary);
+    color: #fff;
+}
+
+.admin-content {
+    padding: 0 20px;
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    min-width: 600px;
+}
+
+.admin-table th {
+    background: var(--bg);
+    padding: 10px;
+    text-align: left;
+    color: var(--primary);
+}
+
+.admin-table td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+/* ---------- REFERRAL / TEAM ---------- */
+.referral-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.referral-card {
+    background: var(--bg2);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    border: 1px solid var(--border);
+}
+
+.referral-card h4 {
+    font-size: 13px;
+    color: var(--text2);
+    margin-bottom: 8px;
+}
+
+.referral-card .link-text {
+    font-size: 11px;
+    color: var(--primary);
+    word-break: break-all;
+    margin-bottom: 8px;
+}
+
+.referral-card .code-text {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--primary);
+    margin-bottom: 8px;
+}
+
+.referral-card .copy-btn {
+    background: #fff;
+    color: #000;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.team-level {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: var(--bg);
+}
+
+.level-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.level-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.level-info .level-name {
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.level-info .level-commission {
+    font-size: 12px;
+    color: var(--success);
+}
+
+.level-stats {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.level-stats .user-count {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.level-stats .reward {
+    font-size: 12px;
+    color: var(--text2);
+}
+
+/* ---------- STATUS BADGES ---------- */
+.status-badge {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    display: inline-block;
+    text-transform: capitalize;
+}
+
+.status-pending {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--warning);
+}
+
+.status-approved,
+.status-success {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--success);
+}
+
+.status-rejected {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--danger);
+}
+
+.status-invested {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--success);
+}
+
+.status-notinvested {
+    background: rgba(148, 163, 184, 0.2);
+    color: var(--text3);
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 768px) {
+    .plans-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .dash-balance {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .admin-metrics {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .referral-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .plans-grid {
+        grid-template-columns: 1fr;
+    }
+    .auth-card {
+        padding: 24px;
+    }
+    .auth-card h2 {
+        font-size: 22px;
+    }
+}
