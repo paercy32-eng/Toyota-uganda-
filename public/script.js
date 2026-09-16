@@ -6,7 +6,8 @@
 const SUPABASE_URL = 'https://uiidsthzvnxvouxjpsfd.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpaWRzdGh6dm54dm91eGpwc2ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNjgwNjEsImV4cCI6MjEwNDk0NDA2MX0.hXbFdoKo78LnBKv5OqNunO1tOmnMBvC7khh0tzZAVc4';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Renamed from 'supabase' to 'sb' to avoid collision with the Supabase SDK's window.supabase
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ======================= CONSTANTS =======================
 const ADMIN_CREDENTIALS = [
@@ -106,7 +107,7 @@ async function register() {
     const fullPhone = country + cleanPhone;
 
     try {
-        const { data: existing } = await supabase
+        const { data: existing } = await sb
             .from('users')
             .select('id')
             .eq('phone', fullPhone)
@@ -116,7 +117,7 @@ async function register() {
 
         const refCode = 'TYT' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-        const { data: newUser, error: insertError } = await supabase
+        const { data: newUser, error: insertError } = await sb
             .from('users')
             .insert([{
                 name,
@@ -167,7 +168,7 @@ async function login() {
     const fullPhone = country + cleanPhone;
 
     try {
-        const { data: user, error } = await supabase
+        const { data: user, error } = await sb
             .from('users')
             .select('*')
             .eq('phone', fullPhone)
@@ -223,7 +224,7 @@ function updateDashboard() {
 
 async function refreshUser() {
     if (!currentUser) return;
-    const { data, error } = await supabase
+    const { data, error } = await sb
         .from('users')
         .select('*')
         .eq('id', currentUser.id)
@@ -275,7 +276,7 @@ async function showOrders() {
     const c = document.getElementById('userContent');
     c.innerHTML = '<div class="dash-section"><h3>📦 My Orders</h3><p>Loading...</p></div>';
 
-    const { data: investments, error } = await supabase
+    const { data: investments, error } = await sb
         .from('investments')
         .select('*')
         .eq('user_id', currentUser.id)
@@ -315,7 +316,7 @@ async function showTeam() {
     const c = document.getElementById('userContent');
     c.innerHTML = '<div class="dash-section"><h3>👥 My Team</h3><p>Loading...</p></div>';
 
-    const { data: l1 } = await supabase
+    const { data: l1 } = await sb
         .from('users')
         .select('id, name, phone, total_invested, ref_code')
         .eq('referred_by', currentUser.ref_code);
@@ -325,7 +326,7 @@ async function showTeam() {
 
     let l2List = [];
     if (l1Codes.length > 0) {
-        const { data: l2 } = await supabase
+        const { data: l2 } = await sb
             .from('users')
             .select('id, name, phone, total_invested, ref_code')
             .in('referred_by', l1Codes);
@@ -335,7 +336,7 @@ async function showTeam() {
     const l2Codes = l2List.map(u => u.ref_code);
     let l3List = [];
     if (l2Codes.length > 0) {
-        const { data: l3 } = await supabase
+        const { data: l3 } = await sb
             .from('users')
             .select('id, name, phone, total_invested, ref_code')
             .in('referred_by', l2Codes);
@@ -431,21 +432,21 @@ async function showProfile() {
 
     await refreshUser();
 
-    const { data: deposits } = await supabase
+    const { data: deposits } = await sb
         .from('deposits')
         .select('*')
         .eq('user_id', currentUser.id)
         .order('created_at', { ascending: false })
         .limit(10);
 
-    const { data: withdrawals } = await supabase
+    const { data: withdrawals } = await sb
         .from('withdrawals')
         .select('*')
         .eq('user_id', currentUser.id)
         .order('created_at', { ascending: false })
         .limit(10);
 
-    const { data: investments } = await supabase
+    const { data: investments } = await sb
         .from('investments')
         .select('*')
         .eq('user_id', currentUser.id)
@@ -583,7 +584,7 @@ async function submitDeposit() {
     if (!txPhone || txPhone.length < 9) { showToast('Enter phone used', 'error'); return; }
 
     try {
-        const { error } = await supabase
+        const { error } = await sb
             .from('deposits')
             .insert([{
                 user_id: currentUser.id,
@@ -611,7 +612,7 @@ async function submitDeposit() {
 function openWithdraw() {
     if (!currentUser) return;
 
-    supabase.from('investments')
+    sb.from('investments')
         .select('id')
         .eq('user_id', currentUser.id)
         .limit(1)
@@ -651,14 +652,14 @@ async function submitWithdraw() {
     const net = amt - fee;
 
     try {
-        const { error: balanceError } = await supabase
+        const { error: balanceError } = await sb
             .from('users')
             .update({ balance: currentUser.balance - amt })
             .eq('id', currentUser.id);
 
         if (balanceError) throw balanceError;
 
-        const { error: withdrawError } = await supabase
+        const { error: withdrawError } = await sb
             .from('withdrawals')
             .insert([{
                 user_id: currentUser.id,
@@ -691,7 +692,7 @@ async function purchase(planId) {
     const plan = PLANS.find(p => p.id === planId);
     if (!plan) return;
 
-    const { data: existing } = await supabase
+    const { data: existing } = await sb
         .from('investments')
         .select('id')
         .eq('user_id', currentUser.id)
@@ -705,14 +706,14 @@ async function purchase(planId) {
         const newBalance = currentUser.balance - plan.amount;
         const newInvested = (currentUser.total_invested || 0) + plan.amount;
 
-        const { error: userError } = await supabase
+        const { error: userError } = await sb
             .from('users')
             .update({ balance: newBalance, total_invested: newInvested })
             .eq('id', currentUser.id);
 
         if (userError) throw userError;
 
-        const { error: invError } = await supabase
+        const { error: invError } = await sb
             .from('investments')
             .insert([{
                 user_id: currentUser.id,
@@ -726,7 +727,7 @@ async function purchase(planId) {
 
         if (invError) throw invError;
 
-        const { error: rpcError } = await supabase.rpc('process_referral_commission', {
+        const { error: rpcError } = await sb.rpc('process_referral_commission', {
             p_user_id: currentUser.id,
             p_amount: plan.amount
         });
@@ -755,13 +756,13 @@ function showAdminConsole() {
 
 async function updateAdminMetrics() {
     try {
-        const { count: userCount } = await supabase
+        const { count: userCount } = await sb
             .from('users')
             .select('*', { count: 'exact', head: true });
 
         document.getElementById('adminUsers').textContent = userCount || 0;
 
-        const { data: approvedDeposits } = await supabase
+        const { data: approvedDeposits } = await sb
             .from('deposits')
             .select('amount')
             .eq('status', 'approved');
@@ -769,14 +770,14 @@ async function updateAdminMetrics() {
         const depTotal = (approvedDeposits || []).reduce((s, d) => s + d.amount, 0);
         document.getElementById('adminDeposits').textContent = depTotal.toLocaleString();
 
-        const { data: users } = await supabase
+        const { data: users } = await sb
             .from('users')
             .select('total_invested');
 
         const invTotal = (users || []).reduce((s, u) => s + (u.total_invested || 0), 0);
         document.getElementById('adminInvested').textContent = invTotal.toLocaleString();
 
-        const { data: approvedWithdrawals } = await supabase
+        const { data: approvedWithdrawals } = await sb
             .from('withdrawals')
             .select('amount')
             .eq('status', 'approved');
@@ -798,7 +799,7 @@ async function adminTab(tab, evt) {
 
     try {
         if (tab === 'deposits') {
-            const { data: pending } = await supabase
+            const { data: pending } = await sb
                 .from('deposits')
                 .select('*')
                 .eq('status', 'pending')
@@ -823,7 +824,7 @@ async function adminTab(tab, evt) {
             `;
 
         } else if (tab === 'withdrawals') {
-            const { data: pending } = await supabase
+            const { data: pending } = await sb
                 .from('withdrawals')
                 .select('*')
                 .eq('status', 'pending')
@@ -848,7 +849,7 @@ async function adminTab(tab, evt) {
             `;
 
         } else {
-            const { data: users } = await supabase
+            const { data: users } = await sb
                 .from('users')
                 .select('*')
                 .order('created_at', { ascending: false });
@@ -885,7 +886,7 @@ async function adminTab(tab, evt) {
 
 async function approveDeposit(id) {
     try {
-        const { data: deposit } = await supabase
+        const { data: deposit } = await sb
             .from('deposits')
             .select('*')
             .eq('id', id)
@@ -893,19 +894,19 @@ async function approveDeposit(id) {
 
         if (!deposit) return;
 
-        await supabase
+        await sb
             .from('deposits')
             .update({ status: 'approved' })
             .eq('id', id);
 
-        const { data: user } = await supabase
+        const { data: user } = await sb
             .from('users')
             .select('balance')
             .eq('id', deposit.user_id)
             .single();
 
         if (user) {
-            await supabase
+            await sb
                 .from('users')
                 .update({ balance: user.balance + deposit.amount })
                 .eq('id', deposit.user_id);
@@ -923,7 +924,7 @@ async function approveDeposit(id) {
 
 async function rejectDeposit(id) {
     try {
-        await supabase
+        await sb
             .from('deposits')
             .update({ status: 'rejected' })
             .eq('id', id);
@@ -939,7 +940,7 @@ async function rejectDeposit(id) {
 
 async function approveWithdraw(id) {
     try {
-        await supabase
+        await sb
             .from('withdrawals')
             .update({ status: 'approved' })
             .eq('id', id);
@@ -955,7 +956,7 @@ async function approveWithdraw(id) {
 
 async function rejectWithdraw(id) {
     try {
-        const { data: w } = await supabase
+        const { data: w } = await sb
             .from('withdrawals')
             .select('*')
             .eq('id', id)
@@ -963,19 +964,19 @@ async function rejectWithdraw(id) {
 
         if (!w) return;
 
-        await supabase
+        await sb
             .from('withdrawals')
             .update({ status: 'rejected' })
             .eq('id', id);
 
-        const { data: user } = await supabase
+        const { data: user } = await sb
             .from('users')
             .select('balance')
             .eq('id', w.user_id)
             .single();
 
         if (user) {
-            await supabase
+            await sb
                 .from('users')
                 .update({ balance: user.balance + w.amount })
                 .eq('id', w.user_id);
@@ -992,7 +993,7 @@ async function rejectWithdraw(id) {
 
 async function toggleBlock(userId) {
     try {
-        const { data: u } = await supabase
+        const { data: u } = await sb
             .from('users')
             .select('blocked, name')
             .eq('id', userId)
@@ -1000,7 +1001,7 @@ async function toggleBlock(userId) {
 
         if (!u) return;
 
-        await supabase
+        await sb
             .from('users')
             .update({ blocked: !u.blocked })
             .eq('id', userId);
@@ -1023,7 +1024,7 @@ setInterval(() => {
 
 async function creditDailyEarnings() {
     try {
-        const { data: investments } = await supabase
+        const { data: investments } = await sb
             .from('investments')
             .select('*')
             .eq('active', true);
@@ -1031,14 +1032,14 @@ async function creditDailyEarnings() {
         if (!investments) return;
 
         for (const inv of investments) {
-            const { data: user } = await supabase
+            const { data: user } = await sb
                 .from('users')
                 .select('balance, total_earned')
                 .eq('id', inv.user_id)
                 .single();
 
             if (user) {
-                await supabase
+                await sb
                     .from('users')
                     .update({
                         balance: user.balance + inv.daily_earning,
@@ -1073,7 +1074,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (cached) {
         try {
             currentUser = JSON.parse(cached);
-            const { data, error } = await supabase
+            const { data, error } = await sb
                 .from('users')
                 .select('*')
                 .eq('id', currentUser.id)
